@@ -1,35 +1,99 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [length, setLength] = useState(8);
+  const [IncludeUppercase, setIncludeUppercase] = useState(true);
+  const [IncludeLowercase, setIncludeLowercase] = useState(true);
+  const [IncludeNumbers, setIncludeNumbers] = useState(true);
+  const [IncludeSymbols, setIncludeSymbols] = useState(true);
+  const [password, setPassword] = useState("");
+
+  const generatePassword = () => {
+    let charList = "";
+    if (IncludeUppercase) charList += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if (IncludeLowercase) charList += "abcdefghijklmnopqrstuvwxyz";
+    if (IncludeNumbers) charList += "0123456789";
+    if (IncludeSymbols) charList += "!@#$%^&*(){}[]";
+
+    if (charList === "") {
+      setPassword("Select at least one option!");
+      return;
+    }
+
+    let generatedPassword = "";
+    for (let i = 0; i < length; i++) {
+      generatedPassword += charList.charAt(
+        Math.floor(Math.random() * charList.length)
+      );
+    }
+    setPassword(generatedPassword);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="password-generator">
+      <h2>Strong Password Generator</h2>
+      <div className="input-group">
+        <label htmlFor="num">Password Length:</label>
+        <input
+          type="number"
+          id="num"
+          value={length}
+          onChange={(e) =>
+            setLength(Math.max(1, parseInt(e.target.value) || 1))
+          }
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <div className="checkbox-group">
+        <input
+          type="checkbox"
+          id="upper"
+          checked={IncludeUppercase}
+          onChange={(e) => setIncludeUppercase(e.target.checked)}
+        />
+        <label htmlFor="upper">Include Uppercase</label>
+      </div>
+      <div className="checkbox-group">
+        <input
+          type="checkbox"
+          id="lower"
+          checked={IncludeLowercase}
+          onChange={(e) => setIncludeLowercase(e.target.checked)}
+        />
+        <label htmlFor="lower">Include Lowercase</label>
+      </div>
+      <div className="checkbox-group">
+        <input
+          type="checkbox"
+          id="number"
+          checked={IncludeNumbers}
+          onChange={(e) => setIncludeNumbers(e.target.checked)}
+        />
+        <label htmlFor="number">Include Numbers</label>
+      </div>
+      <div className="checkbox-group">
+        <input
+          type="checkbox"
+          id="symbol"
+          checked={IncludeSymbols}
+          onChange={(e) => setIncludeSymbols(e.target.checked)}
+        />
+        <label htmlFor="symbol">Include Symbols</label>
+      </div>
+      <button className="generate-button" onClick={generatePassword}>
+        Generate Password
+      </button>
+      <div className="generate-password">
+        <input type="text" readOnly value={password} />
+        <button
+          className="copy-btn"
+          onClick={() => navigator.clipboard.writeText(password)}
+        >
+          Copy
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
