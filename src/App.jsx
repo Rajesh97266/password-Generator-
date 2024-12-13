@@ -8,6 +8,7 @@ function App() {
   const [IncludeNumbers, setIncludeNumbers] = useState(true);
   const [IncludeSymbols, setIncludeSymbols] = useState(true);
   const [password, setPassword] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const generatePassword = () => {
     let charList = "";
@@ -17,7 +18,7 @@ function App() {
     if (IncludeSymbols) charList += "!@#$%^&*(){}[]";
 
     if (charList === "") {
-      setPassword("Select at least one option!");
+      setPassword("");
       return;
     }
 
@@ -28,6 +29,15 @@ function App() {
       );
     }
     setPassword(generatedPassword);
+  };
+
+  const isOptionSelected =
+    IncludeUppercase || IncludeLowercase || IncludeNumbers || IncludeSymbols;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(password);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
   };
 
   return (
@@ -80,16 +90,17 @@ function App() {
         />
         <label htmlFor="symbol">Include Symbols</label>
       </div>
-      <button className="generate-button" onClick={generatePassword}>
+      <button
+        className="generate-button"
+        onClick={generatePassword}
+        disabled={!isOptionSelected}
+      >
         Generate Password
       </button>
       <div className="generate-password">
         <input type="text" readOnly value={password} />
-        <button
-          className="copy-btn"
-          onClick={() => navigator.clipboard.writeText(password)}
-        >
-          Copy
+        <button className="copy-btn" onClick={handleCopy}>
+          {copied ? "Copied!" : "Copy"}
         </button>
       </div>
     </div>
